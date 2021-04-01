@@ -70,7 +70,6 @@ NodePtr TreeExprBuilder::MakeNull(DataTypePtr data_type) {
       return std::make_shared<LiteralNode>(data_type, LiteralHolder((int8_t)0), true);
     case arrow::Type::INT16:
       return std::make_shared<LiteralNode>(data_type, LiteralHolder((int16_t)0), true);
-      return std::make_shared<LiteralNode>(data_type, LiteralHolder((int32_t)0), true);
     case arrow::Type::UINT8:
       return std::make_shared<LiteralNode>(data_type, LiteralHolder((uint8_t)0), true);
     case arrow::Type::UINT16:

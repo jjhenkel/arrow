@@ -81,6 +81,10 @@ MOD_OP(mod, int64, int64, int64)
 
 #undef MOD_OP
 
+FORCE_INLINE gdv_int64 add_four_int64(gdv_int64 x) {
+  return x + 4;
+}
+
 gdv_float64 mod_float64_float64(int64_t context, gdv_float64 x, gdv_float64 y) {
   if (y == 0.0) {
     char const* err_msg = "divide by zero error";
