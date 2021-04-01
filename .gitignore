@@ -15,6 +15,9 @@
 # specific language governing permissions and limitations
 # under the License.
 
+dist/
+arrow-cpp-build/
+
 apache-rat-*.jar
 arrow-src.tar
 arrow-src.tar.gz
