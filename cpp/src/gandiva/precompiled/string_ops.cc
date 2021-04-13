@@ -53,6 +53,84 @@ int match_string(const char* input, gdv_int32 input_len, gdv_int32 start_pos,
   return -1;
 }
 
+
+FORCE_INLINE
+const char* match_label_seq_binary_binary(
+  gdv_int64 context, const gdv_int64 fileId, const gdv_binary data, gdv_int32 data_len,
+  const gdv_binary labels, gdv_int32 labels_len, int32_t* out_len
+) {
+  const int16_t FILE_ID_SIZE_IN_BYTES = 8;
+  const int16_t GID_SIZE_IN_BYTES = 8;
+  const int16_t POS_SIZE_IN_BYTES = 8;
+  const int16_t LABEL_SIZE_IN_BYTES = 2;
+  const int16_t LABEL_AND_PADDING_SIZE_IN_BYTES = 8;
+
+  const int16_t LABEL_OFFSET_FROM_START = 16;
+  const int16_t GID_OFFSET_FROM_LABEL = -16;
+  const int16_t POS_OFFSET_FROM_LABEL = -8;
+
+  // No data, no results
+  if (data_len == 0) {
+    *out_len = 0;
+    return "";
+  }
+
+  *out_len = FILE_ID_SIZE_IN_BYTES + (GID_SIZE_IN_BYTES + POS_SIZE_IN_BYTES) * (labels_len / LABEL_SIZE_IN_BYTES);
+  gdv_binary ret = reinterpret_cast<gdv_binary>(
+    gdv_fn_context_arena_malloc(context, *out_len)
+  );
+  if (ret == nullptr) {
+    gdv_fn_context_set_error_msg(context, "Could not allocate memory for output string");
+    *out_len = 0;
+    return "";
+  }
+  memset(ret, 0, *out_len);
+
+  // Copy over fileId
+  memcpy(ret, static_cast<const void*>(&fileId), FILE_ID_SIZE_IN_BYTES);
+
+  // Let's loop through our labels 
+  int idx = 0;
+  for (int i = 0; i < labels_len; i += LABEL_SIZE_IN_BYTES) {
+    u_int16_t label = (labels[i] << 8) | labels[i+1]; // Unpack a label
+
+    // Walk through the path 
+    bool matched = false;
+    while (idx < data_len) {
+      idx += LABEL_OFFSET_FROM_START; // skip to label
+
+      // Unpack label in path
+      u_int16_t plabel = (data[idx] << 8) | data[idx + 1];
+      if (plabel == label) { // Maybe it matches the current label we're looking for
+        // Great! Copy over the gid (preceding 8 bytes) into our output array
+        memcpy(
+          &ret[FILE_ID_SIZE_IN_BYTES + (i / LABEL_SIZE_IN_BYTES) * (GID_SIZE_IN_BYTES + POS_SIZE_IN_BYTES)],
+          &data[idx + GID_OFFSET_FROM_LABEL],
+          GID_SIZE_IN_BYTES + POS_SIZE_IN_BYTES
+        );
+        // Can move on now
+        matched = true;
+        // Skip rest of label + padding
+        idx += LABEL_AND_PADDING_SIZE_IN_BYTES;
+        break;
+      }
+
+      // No match, skip rest of label (field, index) and padding
+      idx += LABEL_AND_PADDING_SIZE_IN_BYTES;
+    }
+
+    // If we didn't find a label we needed, then we quit
+    if (!matched) {
+      // Maybe zero stuff out for partial matches?
+      memset(ret, 0, *out_len);
+      break;
+    }
+  }
+  
+  return ret;
+}
+
+
 FORCE_INLINE
 gdv_int32 mem_compare(const char* left, gdv_int32 left_len, const char* right,
                       gdv_int32 right_len) {

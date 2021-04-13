@@ -100,6 +100,9 @@ std::vector<NativeFunction> GetStringFunctionRegistry() {
                      kResultNullIfNull, "gdv_fn_like_utf8_utf8",
                      NativeFunction::kNeedsFunctionHolder),
 
+      NativeFunction("match_label_seq", {}, DataTypeVector{int64(), binary(), binary()}, binary(),
+                     kResultNullIfNull, "match_label_seq_binary_binary", NativeFunction::kNeedsContext),
+
       NativeFunction("ltrim", {}, DataTypeVector{utf8(), utf8()}, utf8(),
                      kResultNullIfNull, "ltrim_utf8_utf8", NativeFunction::kNeedsContext),
 
