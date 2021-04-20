@@ -53,7 +53,6 @@ int match_string(const char* input, gdv_int32 input_len, gdv_int32 start_pos,
   return -1;
 }
 
-
 FORCE_INLINE
 const char* match_label_seq_binary_binary(
   gdv_int64 context, const gdv_int64 fileId, const gdv_binary data, gdv_int32 data_len,

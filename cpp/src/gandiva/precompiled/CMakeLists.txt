@@ -26,6 +26,7 @@ set(PRECOMPILED_SRCS
     hash.cc
     print.cc
     string_ops.cc
+    tree_path_ops.cc
     time.cc
     timestamp_arithmetic.cc
     ../../arrow/util/basic_decimal.cc)

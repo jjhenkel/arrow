@@ -103,6 +103,9 @@ std::vector<NativeFunction> GetStringFunctionRegistry() {
       NativeFunction("match_label_seq", {}, DataTypeVector{int64(), binary(), binary()}, binary(),
                      kResultNullIfNull, "match_label_seq_binary_binary", NativeFunction::kNeedsContext),
 
+      NativeFunction("match_label_seq_in_place", {}, DataTypeVector{int64(), binary(), binary()}, boolean(),
+                     kResultNullIfNull, "match_label_seq_in_place_binary_binary"),
+
       NativeFunction("ltrim", {}, DataTypeVector{utf8(), utf8()}, utf8(),
                      kResultNullIfNull, "ltrim_utf8_utf8", NativeFunction::kNeedsContext),
 
