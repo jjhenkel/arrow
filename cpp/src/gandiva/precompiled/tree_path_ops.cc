@@ -12,12 +12,17 @@ extern "C" {
 
 
 const gdv_int16 EXTRA_SIZE = 8;
+const gdv_int16 GID_SIZE = 8;
+const gdv_int16 POS_SIZE = 8;
 const gdv_int16 GID_AND_POS_SIZE = 16;
-const gdv_int16 PATH_SEGMENT_SIZE = 24;
+const gdv_int16 PATH_SEGMENT_SIZE = 40;
 
-const gdv_int16 LABEL_OFFSET = 16;
-const gdv_int16 FIELD_OFFSET = 18;
-const gdv_int16 INDEX_OFFSET = 20;
+const gdv_int16 DEF_ID_OFFSET = 8;
+const gdv_int16 NAME_ID_OFFSET = 16;
+const gdv_int16 POS_OFFSET = 24;
+const gdv_int16 LABEL_OFFSET = 32;
+const gdv_int16 FIELD_OFFSET = 34;
+const gdv_int16 INDEX_OFFSET = 36;
 
 const gdv_uint16 BITS_IN_BYTE = 8;
 
@@ -55,8 +60,7 @@ const char* match_tree_path_n1(
   }
 
   gdv_int32 match_1_idx = -1;
-  gdv_int32 didx = 0;
-  for (gdv_int32 p_idx = 0; p_idx < path_len; p_idx += PATH_SEGMENT_SIZE, didx += 4) {
+  for (gdv_int32 p_idx = 0; p_idx < path_len; p_idx += PATH_SEGMENT_SIZE) {
     if (label1 != READ_UINT16_AT_OFFSET(p_idx, LABEL_OFFSET)) {
         continue;
     }
@@ -83,7 +87,8 @@ const char* match_tree_path_n1(
     // Copy over extra + maybe capture
     memcpy(ret, static_cast<const void*>(&extra), EXTRA_SIZE);
     if (capture1) {
-        memcpy(&ret[EXTRA_SIZE], &path[match_1_idx], GID_AND_POS_SIZE);
+        memcpy(&ret[EXTRA_SIZE], &path[match_1_idx], GID_SIZE);
+        memcpy(&ret[EXTRA_SIZE+GID_SIZE], &path[match_1_idx+POS_OFFSET], POS_SIZE);
     }
     
     return ret;
@@ -180,11 +185,13 @@ const char* match_tree_path_n2(
     gdv_int16 offset = EXTRA_SIZE;
     memcpy(ret, static_cast<const void*>(&extra), EXTRA_SIZE);
     if (capture1) {
-        memcpy(&ret[offset], &path[match_1_idx], GID_AND_POS_SIZE);
+        memcpy(&ret[offset], &path[match_1_idx], GID_SIZE);
+        memcpy(&ret[offset+GID_SIZE], &path[match_1_idx+POS_OFFSET], POS_SIZE);
         offset += GID_AND_POS_SIZE;
     }
     if (capture2) {
-        memcpy(&ret[offset], &path[match_2_idx], GID_AND_POS_SIZE);
+        memcpy(&ret[offset], &path[match_2_idx], GID_SIZE);
+        memcpy(&ret[offset+GID_SIZE], &path[match_2_idx+POS_OFFSET], POS_SIZE);
     }
     
     return ret;
@@ -312,15 +319,18 @@ const char* match_tree_path_n3(
     gdv_int16 offset = EXTRA_SIZE;
     memcpy(ret, static_cast<const void*>(&extra), EXTRA_SIZE);
     if (capture1) {
-        memcpy(&ret[offset], &path[match_1_idx], GID_AND_POS_SIZE);
+        memcpy(&ret[offset], &path[match_2_idx], GID_SIZE);
+        memcpy(&ret[GID_SIZE+offset], &path[match_2_idx+POS_OFFSET], POS_SIZE);
         offset += GID_AND_POS_SIZE;
     }
     if (capture2) {
-        memcpy(&ret[offset], &path[match_2_idx], GID_AND_POS_SIZE);
+        memcpy(&ret[offset], &path[match_2_idx], GID_SIZE);
+        memcpy(&ret[GID_SIZE+offset], &path[match_2_idx+POS_OFFSET], POS_SIZE);
         offset += GID_AND_POS_SIZE;
     }
     if (capture3) {
-        memcpy(&ret[offset], &path[match_3_idx], GID_AND_POS_SIZE);
+        memcpy(&ret[offset], &path[match_3_idx], GID_SIZE);
+        memcpy(&ret[GID_SIZE+offset], &path[match_3_idx+POS_OFFSET], POS_SIZE);
     }
     
     return ret;
