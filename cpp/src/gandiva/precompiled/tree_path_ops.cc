@@ -1,7 +1,6 @@
 
 // String functions
 #include "arrow/util/value_parsing.h"
-extern "C" {
 
 #include <limits.h>
 #include <stdio.h>
@@ -11,10 +10,24 @@ extern "C" {
 #include "./types.h"
 
 
+#define READ_UINT16_AT_OFFSET(IDX, OFFSET) \
+  ((static_cast<uint8_t>(path[IDX + OFFSET + 1]) << BITS_IN_BYTE) | static_cast<uint8_t>(path[IDX + OFFSET]))
+
+#define READ_INT64_AT_OFFSET(IDX, OFFSET) \
+  ((static_cast<int64_t>(path[IDX + OFFSET + 3]) << BITS_IN_BYTE*3) | (static_cast<int64_t>(path[IDX + OFFSET + 2]) << BITS_IN_BYTE*2) | (static_cast<int64_t>(path[IDX + OFFSET + 1]) << BITS_IN_BYTE*1) | static_cast<int64_t>(path[IDX + OFFSET]))
+
+#define VALIDATE_PATH(NUM_LABELS) \
+  if (path_len <= (NUM_LABELS) * PATH_SEGMENT_SIZE) { \
+    *out_len = 0; \
+    return ""; \
+  }
+
+
 const gdv_int16 EXTRA_SIZE = 8;
 const gdv_int16 GID_SIZE = 8;
 const gdv_int16 POS_SIZE = 8;
 const gdv_int16 GID_AND_POS_SIZE = 16;
+const gdv_int16 GID_AND_DEF_SIZE = 16;
 const gdv_int16 PATH_SEGMENT_SIZE = 40;
 
 const gdv_int16 DEF_ID_OFFSET = 8;
@@ -27,318 +40,256 @@ const gdv_int16 INDEX_OFFSET = 36;
 const gdv_uint16 BITS_IN_BYTE = 8;
 
 
-#define READ_UINT16_AT_OFFSET(IDX, OFFSET) \
-  ((static_cast<uint8_t>(path[IDX + OFFSET + 1]) << BITS_IN_BYTE) | static_cast<uint8_t>(path[IDX + OFFSET]))
-
-#define VALIDATE_PATH(NUM_LABELS) \
-  if (path_len <= (NUM_LABELS) * PATH_SEGMENT_SIZE) { \
-    *out_len = 0; \
-    return ""; \
-  }
-
-FORCE_INLINE
-const char* match_tree_path_n1(
-  gdv_int64 context,
-  const gdv_int64 extra,
-  const gdv_binary path,
-  const gdv_int32 path_len,
-  const gdv_boolean negate,
-  const gdv_boolean capture1,
-  const gdv_boolean match_field1,
-  const gdv_boolean match_index1,
-  const gdv_uint16 label1,
-  const gdv_uint16 field1,
-  const gdv_uint16 index1,
-  gdv_int32* out_len
+template<
+  bool NEGATE, 
+  bool MATCH_LABEL, 
+  bool MATCH_NAME, 
+  bool MATCH_FIELD, 
+  bool MATCH_INDEX,
+  uint16_t MATCH_STEPS_OP
+>
+inline __attribute__((always_inline))
+int32_t match_inner(
+    const char* path,
+    const int32_t path_len,
+    const uint16_t label,
+    const int64_t name,
+    const uint16_t field,
+    const uint16_t index,
+    const uint16_t steps
 ) {
-  const gdv_int16 NUM_LABELS = 1;
-  const gdv_int16 NUM_CAPTURES = capture1 ? 1 : 0;
+    for (int32_t p_idx = 0; p_idx < path_len; p_idx += PATH_SEGMENT_SIZE) {
+        if constexpr (!NEGATE && MATCH_NAME) {
+            if (name != READ_INT64_AT_OFFSET(p_idx, NAME_ID_OFFSET)) {
+                continue;
+            }
+        } else if constexpr (NEGATE && MATCH_NAME) {
+            if (name == READ_INT64_AT_OFFSET(p_idx, NAME_ID_OFFSET)) {
+                continue;
+            }
+        }
 
-  if (path_len < NUM_LABELS * PATH_SEGMENT_SIZE) {
-    *out_len = 0;
-    return "";
-  }
+        if constexpr (!NEGATE && MATCH_LABEL) {
+            if (label != READ_UINT16_AT_OFFSET(p_idx, LABEL_OFFSET)) {
+                continue;
+            }
+        } else if constexpr (NEGATE && MATCH_LABEL) {
+            if (label == READ_UINT16_AT_OFFSET(p_idx, LABEL_OFFSET)) {
+                continue;
+            }
+        }
 
-  gdv_int32 match_1_idx = -1;
-  for (gdv_int32 p_idx = 0; p_idx < path_len; p_idx += PATH_SEGMENT_SIZE) {
-    if (label1 != READ_UINT16_AT_OFFSET(p_idx, LABEL_OFFSET)) {
-        continue;
-    }
-    if (match_field1 && field1 != READ_UINT16_AT_OFFSET(p_idx, FIELD_OFFSET)) {
-        continue;
-    }
-    if (match_index1 && index1 != READ_UINT16_AT_OFFSET(p_idx, INDEX_OFFSET)) {
-        continue;
-    }
-    match_1_idx = p_idx;
-    break;
-  }
+        if constexpr (!NEGATE && MATCH_FIELD) { 
+            if (field != READ_UINT16_AT_OFFSET(p_idx, FIELD_OFFSET)) {
+                continue;
+            }
+        } else if constexpr (NEGATE && MATCH_FIELD) {
+            if (field == READ_UINT16_AT_OFFSET(p_idx, FIELD_OFFSET)) {
+                continue;
+            }
+        }
 
-  if ((negate && match_1_idx == -1) || (!negate && match_1_idx != -1)) {
-    // Allocate num capture * size per capture + extra bytes
-    *out_len = NUM_CAPTURES * GID_AND_POS_SIZE + EXTRA_SIZE;
-    gdv_binary ret = reinterpret_cast<gdv_binary>(gdv_fn_context_arena_malloc(context, *out_len));
-    if (ret == nullptr) {
-        gdv_fn_context_set_error_msg(context, "Could not allocate memory for output bytes.");
-        *out_len = 0;
-        return "";
+        if constexpr (!NEGATE && MATCH_INDEX) {
+            if (index != READ_UINT16_AT_OFFSET(p_idx, INDEX_OFFSET)) {
+                continue;
+            }
+        } else if constexpr (NEGATE && MATCH_INDEX) {
+            if (index == READ_UINT16_AT_OFFSET(p_idx, INDEX_OFFSET)) {
+                continue;
+            }
+        }
+
+        if constexpr (MATCH_STEPS_OP == 1) {        // <
+            if ((p_idx / PATH_SEGMENT_SIZE) >= steps) {
+                continue;
+            }
+        } else if constexpr (MATCH_STEPS_OP == 2) { // >
+            if ((p_idx / PATH_SEGMENT_SIZE) <= steps) {
+                continue;
+            }
+        } else if constexpr (MATCH_STEPS_OP == 3) { // ==
+            if ((p_idx / PATH_SEGMENT_SIZE) != steps) {
+                continue;
+            }
+        }
+
+        return p_idx;
     }
 
-    // Copy over extra + maybe capture
-    memcpy(ret, static_cast<const void*>(&extra), EXTRA_SIZE);
-    if (capture1) {
-        memcpy(&ret[EXTRA_SIZE], &path[match_1_idx], GID_SIZE);
-        memcpy(&ret[EXTRA_SIZE+GID_SIZE], &path[match_1_idx+POS_OFFSET], POS_SIZE);
-    }
+    return -1;
+}
+
+template<
+  bool NEGATE_1, 
+  bool MATCH_LABEL_1, 
+  bool MATCH_NAME_1, 
+  bool MATCH_FIELD_1, 
+  bool MATCH_INDEX_1,
+  uint16_t MATCH_STEPS_OP_1
+>
+inline __attribute__((always_inline))
+char* match_1(
+    int64_t context,
+    const int64_t extra,
+    const char* path,
+    const int32_t path_len,
+    const uint16_t label1,
+    const int64_t name1,
+    const uint16_t field1,
+    const uint16_t index1,
+    const uint16_t steps1,
+    int32_t* out_len
+) {
+    int32_t idx1 = 0;
     
-    return ret;
-  }
+    const char * current = path;
+    int32_t curr_len = path_len;
+
+    while (idx1 < curr_len && curr_len > 0) {
+        idx1 = match_inner<
+            NEGATE_1, MATCH_LABEL_1, MATCH_NAME_1, MATCH_FIELD_1, MATCH_INDEX_1, MATCH_STEPS_OP_1
+        >(current, curr_len, label1, name1, field1, index1, steps1);
+
+        if (idx1 != -1) {
+          *out_len = 32;
+          char* ret = reinterpret_cast<char*>(gdv_fn_context_arena_malloc(context, 32));
+          if (ret == nullptr) {
+            gdv_fn_context_set_error_msg(context, "Could not allocate memory for output bytes.");
+            *out_len = 0;
+            return nullptr;
+          }
+
+          memcpy(ret, static_cast<const void*>(&extra), EXTRA_SIZE);
+          memcpy(&ret[EXTRA_SIZE], &current[idx1], GID_AND_DEF_SIZE);
+          memcpy(&ret[EXTRA_SIZE + GID_AND_POS_SIZE], &current[idx1+POS_OFFSET], POS_SIZE);
+          return ret;
+        }
+
+        current = &current[idx1 + PATH_SEGMENT_SIZE];
+        curr_len = curr_len - idx1 - PATH_SEGMENT_SIZE;
+        idx1 = -1;
+    }
 
   *out_len = 0;
-  return "";
+  return nullptr;
+}
+
+template<
+  bool NEGATE_1, 
+  bool MATCH_LABEL_1, 
+  bool MATCH_NAME_1, 
+  bool MATCH_FIELD_1, 
+  bool MATCH_INDEX_1,
+  uint16_t MATCH_STEPS_OP_1,
+  bool NEGATE_2, 
+  bool MATCH_LABEL_2, 
+  bool MATCH_NAME_2, 
+  bool MATCH_FIELD_2, 
+  bool MATCH_INDEX_2,
+  uint16_t MATCH_STEPS_OP_2
+>
+inline __attribute__((always_inline))
+char* match_2(
+    int64_t context,
+    const int64_t extra,
+    const char* path,
+    const int32_t path_len,
+    const uint16_t label1,
+    const int64_t name1,
+    const uint16_t field1,
+    const uint16_t index1,
+    const uint16_t steps1,
+    const uint16_t label2,
+    const int64_t name2,
+    const uint16_t field2,
+    const uint16_t index2,
+    const uint16_t steps2,
+    int32_t* out_len
+) {
+    int32_t idx1 = 0;
+    int32_t idx2 = 0;
+    
+    const char * current = path;
+    int32_t curr_len = path_len;
+
+    while (idx1 < curr_len && curr_len > 0) {
+        idx1 = match_inner<
+            NEGATE_1, MATCH_LABEL_1, MATCH_NAME_1, MATCH_FIELD_1, MATCH_INDEX_1, MATCH_STEPS_OP_1
+        >(current, curr_len, label1, name1, field1, index1, steps1);
+    
+        idx2 = match_inner<
+            NEGATE_2, MATCH_LABEL_2, MATCH_NAME_2, MATCH_FIELD_2, MATCH_INDEX_2, MATCH_STEPS_OP_2
+        >(&current[idx1], curr_len - idx1, label2, name2, field2, index2, steps2);
+
+        if (idx1 != -1 && idx2 != -1) {
+          *out_len = 56;
+          char* ret = reinterpret_cast<char*>(gdv_fn_context_arena_malloc(context, 56));
+          if (ret == nullptr) {
+            gdv_fn_context_set_error_msg(context, "Could not allocate memory for output bytes.");
+            *out_len = 0;
+            return nullptr;
+          }
+
+          memcpy(ret, static_cast<const void*>(&extra), EXTRA_SIZE);
+          memcpy(&ret[EXTRA_SIZE], &current[idx1], GID_AND_DEF_SIZE);
+          memcpy(&ret[EXTRA_SIZE + GID_AND_POS_SIZE], &current[idx1+POS_OFFSET], POS_SIZE);
+          memcpy(&ret[32], &current[idx2], GID_AND_DEF_SIZE);
+          memcpy(&ret[48], &current[idx2+POS_OFFSET], POS_SIZE);
+          return ret;
+        }
+
+        current = &current[idx1 + PATH_SEGMENT_SIZE];
+        curr_len = curr_len - idx1 - PATH_SEGMENT_SIZE;
+        idx1 = -1;
+        idx2 = -1;
+    }
+
+  *out_len = 0;
+  return nullptr;
 }
 
 
-FORCE_INLINE
-const char* match_tree_path_n2(
+extern "C" {
+
+const char* match_1_010000(
   gdv_int64 context,
   const gdv_int64 extra,
   const gdv_binary path,
   const gdv_int32 path_len,
-  const gdv_boolean negate,
-  const gdv_boolean capture1,
-  const gdv_boolean match_field1,
-  const gdv_boolean match_index1,
   const gdv_uint16 label1,
-  const gdv_uint16 field1,
-  const gdv_uint16 index1,
-  const gdv_uint16 steps_1_to_2,
-  const gdv_boolean capture2,
-  const gdv_boolean match_field2,
-  const gdv_boolean match_index2,
-  const gdv_uint16 label2,
-  const gdv_uint16 field2,
-  const gdv_uint16 index2,
   gdv_int32* out_len
 ) {
-  const gdv_int16 NUM_LABELS = 2;
-  const gdv_int16 NUM_CAPTURES = (
-      static_cast<gdv_int16>(capture1) + static_cast<gdv_int16>(capture2)
+  return match_1<false, true, false, false, false, 0>(
+    context, extra, path, path_len, label1, 0, 0, 0, 0, out_len
   );
-
-  if (path_len < NUM_LABELS * PATH_SEGMENT_SIZE) {
-    *out_len = 0;
-    return "";
-  }
-
-  gdv_int32 match_1_idx = -1;
-  gdv_int32 match_2_idx = -1;
-  for (gdv_int32 p_idx = 0; p_idx < path_len; p_idx += PATH_SEGMENT_SIZE) {
-    match_2_idx = -1;
-
-    if (label1 != READ_UINT16_AT_OFFSET(p_idx, LABEL_OFFSET)) {
-        continue;
-    }
-    if (match_field1 && field1 != READ_UINT16_AT_OFFSET(p_idx, FIELD_OFFSET)) {
-        continue;
-    }
-    if (match_index1 && index1 != READ_UINT16_AT_OFFSET(p_idx, INDEX_OFFSET)) {
-        continue;
-    }
-
-    gdv_int32 steps_taken_1_2 = 0;
-    for (gdv_int32 p_idx_2 = p_idx + PATH_SEGMENT_SIZE; p_idx_2 < path_len; p_idx_2 += PATH_SEGMENT_SIZE) {
-        steps_taken_1_2 += 1;
-        if (label2 != READ_UINT16_AT_OFFSET(p_idx_2, LABEL_OFFSET)) {
-            continue;
-        }
-        if (match_field2 && field2 != READ_UINT16_AT_OFFSET(p_idx_2, FIELD_OFFSET)) {
-            continue;
-        }
-        if (match_index2 && index2 != READ_UINT16_AT_OFFSET(p_idx_2, INDEX_OFFSET)) {
-            continue;
-        }
-        match_2_idx = p_idx_2;
-        break;
-    }
-
-    if (match_2_idx == -1 || (steps_1_to_2 != 0 && steps_taken_1_2 != steps_1_to_2)) {
-        continue;
-    }
-    
-    match_1_idx = p_idx;
-
-    break;
-  }
-
-  if ((negate && match_1_idx == -1 && match_2_idx == -1) || (!negate && match_1_idx != -1 && match_2_idx != -1)) {
-    // Allocate num capture * size per capture + extra bytes
-    *out_len = NUM_CAPTURES * GID_AND_POS_SIZE + EXTRA_SIZE;
-    gdv_binary ret = reinterpret_cast<gdv_binary>(gdv_fn_context_arena_malloc(context, *out_len));
-    if (ret == nullptr) {
-        gdv_fn_context_set_error_msg(context, "Could not allocate memory for output bytes.");
-        *out_len = 0;
-        return "";
-    }
-
-    // Copy over extra + maybe capture
-    gdv_int16 offset = EXTRA_SIZE;
-    memcpy(ret, static_cast<const void*>(&extra), EXTRA_SIZE);
-    if (capture1) {
-        memcpy(&ret[offset], &path[match_1_idx], GID_SIZE);
-        memcpy(&ret[offset+GID_SIZE], &path[match_1_idx+POS_OFFSET], POS_SIZE);
-        offset += GID_AND_POS_SIZE;
-    }
-    if (capture2) {
-        memcpy(&ret[offset], &path[match_2_idx], GID_SIZE);
-        memcpy(&ret[offset+GID_SIZE], &path[match_2_idx+POS_OFFSET], POS_SIZE);
-    }
-    
-    return ret;
-  }
-
-  *out_len = 0;
-  return "";
 }
 
-
-const char* match_tree_path_n3(
+const char* match_1_110003(
   gdv_int64 context,
   const gdv_int64 extra,
   const gdv_binary path,
   const gdv_int32 path_len,
-  const gdv_boolean negate,
-  const gdv_boolean capture1,
-  const gdv_boolean match_field1,
-  const gdv_boolean match_index1,
   const gdv_uint16 label1,
-  const gdv_uint16 field1,
-  const gdv_uint16 index1,
-  const gdv_uint16 steps_1_to_2,
-  const gdv_boolean capture2,
-  const gdv_boolean match_field2,
-  const gdv_boolean match_index2,
-  const gdv_uint16 label2,
-  const gdv_uint16 field2,
-  const gdv_uint16 index2,
-  const gdv_uint16 steps_2_to_3,
-  const gdv_boolean capture3,
-  const gdv_boolean match_field3,
-  const gdv_boolean match_index3,
-  const gdv_uint16 label3,
-  const gdv_uint16 field3,
-  const gdv_uint16 index3,
+  const gdv_uint16 steps1,
   gdv_int32* out_len
 ) {
-  const gdv_int16 NUM_LABELS = 3;
-  const gdv_int16 NUM_CAPTURES = (
-      static_cast<gdv_int16>(capture1) + static_cast<gdv_int16>(capture2) + static_cast<gdv_int16>(capture3)
+  return match_1<true, true, false, false, false, 3>(
+    context, extra, path, path_len, label1, 0, 0, 0, steps1, out_len
   );
-
-  if (path_len < NUM_LABELS * PATH_SEGMENT_SIZE) {
-    *out_len = 0;
-    return "";
-  }
-
-  gdv_int32 match_1_idx = -1;
-  gdv_int32 match_2_idx = -1;
-  gdv_int32 match_3_idx = -1;
-  for (gdv_int32 p_idx = 0; p_idx < path_len; p_idx += PATH_SEGMENT_SIZE) {
-    match_2_idx = -1;
-    match_3_idx = -1;
-
-    if (label1 != READ_UINT16_AT_OFFSET(p_idx, LABEL_OFFSET)) {
-        continue;
-    }
-    if (match_field1 && field1 != READ_UINT16_AT_OFFSET(p_idx, FIELD_OFFSET)) {
-        continue;
-    }
-    if (match_index1 && index1 != READ_UINT16_AT_OFFSET(p_idx, INDEX_OFFSET)) {
-        continue;
-    }
-
-    gdv_int32 steps_taken_1_2 = 0;
-    for (gdv_int32 p_idx_2 = p_idx + PATH_SEGMENT_SIZE; p_idx_2 < path_len; p_idx_2 += PATH_SEGMENT_SIZE) {
-        steps_taken_1_2 += 1;
-        match_3_idx = -1;
-
-        if (label2 != READ_UINT16_AT_OFFSET(p_idx_2, LABEL_OFFSET)) {
-            continue;
-        }
-        if (match_field2 && field2 != READ_UINT16_AT_OFFSET(p_idx_2, FIELD_OFFSET)) {
-            continue;
-        }
-        if (match_index2 && index2 != READ_UINT16_AT_OFFSET(p_idx_2, INDEX_OFFSET)) {
-            continue;
-        }
-
-        gdv_int32 steps_taken_2_3 = 0;
-        for (gdv_int32 p_idx_3 = p_idx_2 + PATH_SEGMENT_SIZE; p_idx_3 < path_len; p_idx_3 += PATH_SEGMENT_SIZE) {
-            steps_taken_2_3 += 1;
-            if (label3 != READ_UINT16_AT_OFFSET(p_idx_3, LABEL_OFFSET)) {
-                continue;
-            }
-            if (match_field3 && field3 != READ_UINT16_AT_OFFSET(p_idx_3, FIELD_OFFSET)) {
-                continue;
-            }
-            if (match_index3 && index3 != READ_UINT16_AT_OFFSET(p_idx_3, INDEX_OFFSET)) {
-                continue;
-            }
-            match_3_idx = p_idx_3;
-            break;
-        }
-
-        if (match_3_idx == -1 || (steps_2_to_3 != 0 && steps_taken_2_3 != steps_2_to_3)) {
-            continue;
-        }
-
-        match_2_idx = p_idx_2;
-        break;
-    }
-
-    if (match_2_idx == -1 || (steps_1_to_2 != 0 && steps_taken_1_2 != steps_1_to_2)) {
-        continue;
-    }
-    
-    match_1_idx = p_idx;
-
-    break;
-  }
-
-  if ((negate && match_1_idx == -1 && match_2_idx == -1 && match_3_idx == -1) || (!negate && match_1_idx != -1 && match_2_idx != -1 && match_3_idx != -1)) {
-    // Allocate num capture * size per capture + extra bytes
-    *out_len = NUM_CAPTURES * GID_AND_POS_SIZE + EXTRA_SIZE;
-    gdv_binary ret = reinterpret_cast<gdv_binary>(gdv_fn_context_arena_malloc(context, *out_len));
-    if (ret == nullptr) {
-        gdv_fn_context_set_error_msg(context, "Could not allocate memory for output bytes.");
-        *out_len = 0;
-        return "";
-    }
-
-    // Copy over extra + maybe capture
-    gdv_int16 offset = EXTRA_SIZE;
-    memcpy(ret, static_cast<const void*>(&extra), EXTRA_SIZE);
-    if (capture1) {
-        memcpy(&ret[offset], &path[match_2_idx], GID_SIZE);
-        memcpy(&ret[GID_SIZE+offset], &path[match_2_idx+POS_OFFSET], POS_SIZE);
-        offset += GID_AND_POS_SIZE;
-    }
-    if (capture2) {
-        memcpy(&ret[offset], &path[match_2_idx], GID_SIZE);
-        memcpy(&ret[GID_SIZE+offset], &path[match_2_idx+POS_OFFSET], POS_SIZE);
-        offset += GID_AND_POS_SIZE;
-    }
-    if (capture3) {
-        memcpy(&ret[offset], &path[match_3_idx], GID_SIZE);
-        memcpy(&ret[GID_SIZE+offset], &path[match_3_idx+POS_OFFSET], POS_SIZE);
-    }
-    
-    return ret;
-  }
-
-  *out_len = 0;
-  return "";
 }
 
+const char* match_1_010003(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+) {
+  return match_1<false, true, false, false, false, 3>(
+    context, extra, path, path_len, label1, 0, 0, 0, steps1, out_len
+  );
+}
 
 }  // extern "C"

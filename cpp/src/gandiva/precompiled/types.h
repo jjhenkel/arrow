@@ -457,70 +457,33 @@ float castFLOAT4_utf8(int64_t context, const char* data, int32_t len);
 
 double castFLOAT8_utf8(int64_t context, const char* data, int32_t len);
 
-const char* match_tree_path_n1(
+const char* match_1_010000(
   gdv_int64 context,
   const gdv_int64 extra,
   const gdv_binary path,
   const gdv_int32 path_len,
-  const gdv_boolean negate,
-  const gdv_boolean capture1,
-  const gdv_boolean match_field1,
-  const gdv_boolean match_index1,
   const gdv_uint16 label1,
-  const gdv_uint16 field1,
-  const gdv_uint16 index1,
+  gdv_int32* out_len
+);
+const char* match_1_110003(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_1_010003(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 steps1,
   gdv_int32* out_len
 );
 
-const char* match_tree_path_n2(
-  gdv_int64 context,
-  const gdv_int64 extra,
-  const gdv_binary path,
-  const gdv_int32 path_len,
-  const gdv_boolean negate,
-  const gdv_boolean capture1,
-  const gdv_boolean match_field1,
-  const gdv_boolean match_index1,
-  const gdv_uint16 label1,
-  const gdv_uint16 field1,
-  const gdv_uint16 index1,
-  const gdv_uint16 steps_1_to_2,
-  const gdv_boolean capture2,
-  const gdv_boolean match_field2,
-  const gdv_boolean match_index2,
-  const gdv_uint16 label2,
-  const gdv_uint16 field2,
-  const gdv_uint16 index2,
-  gdv_int32* out_len
-);
 
-const char* match_tree_path_n3(
-  gdv_int64 context,
-  const gdv_int64 extra,
-  const gdv_binary path,
-  const gdv_int32 path_len,
-  const gdv_boolean negate,
-  const gdv_boolean capture1,
-  const gdv_boolean match_field1,
-  const gdv_boolean match_index1,
-  const gdv_uint16 label1,
-  const gdv_uint16 field1,
-  const gdv_uint16 index1,
-  const gdv_uint16 steps_1_to_2,
-  const gdv_boolean capture2,
-  const gdv_boolean match_field2,
-  const gdv_boolean match_index2,
-  const gdv_uint16 label2,
-  const gdv_uint16 field2,
-  const gdv_uint16 index2,
-  const gdv_uint16 steps_2_to_3,
-  const gdv_boolean capture3,
-  const gdv_boolean match_field3,
-  const gdv_boolean match_index3,
-  const gdv_uint16 label3,
-  const gdv_uint16 field3,
-  const gdv_uint16 index3,
-  gdv_int32* out_len
-);
 
 }  // extern "C"

@@ -24,27 +24,20 @@ namespace gandiva {
 std::vector<NativeFunction> GetTreePathFunctionRegistry() {
   static std::vector<NativeFunction> tree_path_fn_registry_ = {
 
-      NativeFunction("match_tree_path", {},
-                     DataTypeVector{int64(), binary(), boolean(), boolean(), boolean(),
-                                    boolean(), uint16(), uint16(), uint16()},
-                     binary(), kResultNullIfNull, "match_tree_path_n1",
-                     NativeFunction::kNeedsContext),
-
       NativeFunction(
-          "match_tree_path", {},
-          DataTypeVector{int64(), binary(), boolean(), boolean(), boolean(), boolean(),
-                         uint16(), uint16(), uint16(), uint16(), boolean(), boolean(),
-                         boolean(), uint16(), uint16(), uint16()},
-          binary(), kResultNullIfNull, "match_tree_path_n2",
+          "match_tree_path_1_010000", {},
+          DataTypeVector{int64(), binary(), uint16()},
+          binary(), kResultNullIfNull, "match_1_010000",
           NativeFunction::kNeedsContext),
-
       NativeFunction(
-          "match_tree_path", {},
-          DataTypeVector{int64(), binary(), boolean(), boolean(), boolean(), boolean(),
-                         uint16(), uint16(), uint16(), uint16(), boolean(), boolean(),
-                         boolean(), uint16(), uint16(), uint16(), uint16(), boolean(),
-                         boolean(), boolean(), uint16(), uint16(), uint16()},
-          binary(), kResultNullIfNull, "match_tree_path_n3",
+          "match_tree_path_1_110003", {},
+          DataTypeVector{int64(), binary(), uint16(), uint16()},
+          binary(), kResultNullIfNull, "match_1_110003",
+          NativeFunction::kNeedsContext),
+      NativeFunction(
+          "match_tree_path_1_010003", {},
+          DataTypeVector{int64(), binary(), uint16(), uint16()},
+          binary(), kResultNullIfNull, "match_1_010003",
           NativeFunction::kNeedsContext),
 
   };
