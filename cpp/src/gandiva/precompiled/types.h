@@ -457,15 +457,232 @@ float castFLOAT4_utf8(int64_t context, const char* data, int32_t len);
 
 double castFLOAT8_utf8(int64_t context, const char* data, int32_t len);
 
-const char* match_1_010000(
+const char* match_tree_path_1_111111(
   gdv_int64 context,
   const gdv_int64 extra,
   const gdv_binary path,
   const gdv_int32 path_len,
   const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 field1,
+  const gdv_uint16 index1,
+  const gdv_uint16 steps1,
   gdv_int32* out_len
 );
-const char* match_1_110003(
+const char* match_tree_path_1_111112(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 field1,
+  const gdv_uint16 index1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_111113(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 field1,
+  const gdv_uint16 index1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_111101(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 field1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_111102(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 field1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_111103(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 field1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_111011(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 index1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_111012(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 index1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_111013(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 index1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_111001(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_111002(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_111003(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_110111(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 field1,
+  const gdv_uint16 index1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_110112(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 field1,
+  const gdv_uint16 index1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_110113(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 field1,
+  const gdv_uint16 index1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_110101(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 field1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_110102(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 field1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_110103(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 field1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_110011(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 index1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_110012(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 index1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_110013(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 index1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_110001(
   gdv_int64 context,
   const gdv_int64 extra,
   const gdv_binary path,
@@ -474,7 +691,344 @@ const char* match_1_110003(
   const gdv_uint16 steps1,
   gdv_int32* out_len
 );
-const char* match_1_010003(
+const char* match_tree_path_1_110002(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_110003(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_011110(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 field1,
+  const gdv_uint16 index1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_011111(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 field1,
+  const gdv_uint16 index1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_011112(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 field1,
+  const gdv_uint16 index1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_011113(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 field1,
+  const gdv_uint16 index1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_011100(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 field1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_011101(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 field1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_011102(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 field1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_011103(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 field1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_011010(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 index1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_011011(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 index1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_011012(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 index1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_011013(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 index1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_011000(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_011001(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_011002(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_011003(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_010110(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 field1,
+  const gdv_uint16 index1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_010111(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 field1,
+  const gdv_uint16 index1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_010112(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 field1,
+  const gdv_uint16 index1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_010113(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 field1,
+  const gdv_uint16 index1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_010100(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 field1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_010101(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 field1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_010102(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 field1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_010103(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 field1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_010010(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 index1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_010011(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 index1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_010012(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 index1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_010013(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 index1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_010000(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_010001(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_010002(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 steps1,
+  gdv_int32* out_len
+);
+const char* match_tree_path_1_010003(
   gdv_int64 context,
   const gdv_int64 extra,
   const gdv_binary path,
@@ -484,6 +1038,76 @@ const char* match_1_010003(
   gdv_int32* out_len
 );
 
+const char* match_tree_path_3_010100_011003_010003(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 field1,
+  const gdv_uint16 label2,
+  const gdv_int64 name2,
+  const gdv_uint16 steps2,
+  const gdv_uint16 label3,
+  const gdv_uint16 steps3,
+  gdv_int32* out_len
+);
+const char* match_tree_path_3_010100_011003_110003(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 field1,
+  const gdv_uint16 label2,
+  const gdv_int64 name2,
+  const gdv_uint16 steps2,
+  const gdv_uint16 label3,
+  const gdv_uint16 steps3,
+  gdv_int32* out_len
+);
+const char* match_tree_path_3_010100_011103_010003(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 field1,
+  const gdv_uint16 label2,
+  const gdv_int64 name2,
+  const gdv_uint16 field2,
+  const gdv_uint16 steps2,
+  const gdv_uint16 label3,
+  const gdv_uint16 steps3,
+  gdv_int32* out_len
+);
+const char* match_tree_path_3_010100_011103_110003(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 field1,
+  const gdv_uint16 label2,
+  const gdv_int64 name2,
+  const gdv_uint16 field2,
+  const gdv_uint16 steps2,
+  const gdv_uint16 label3,
+  const gdv_uint16 steps3,
+  gdv_int32* out_len
+);
+const char* match_tree_path_2_010100_011003(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 field1,
+  const gdv_uint16 label2,
+  const gdv_int64 name2,
+  const gdv_uint16 steps2,
+  gdv_int32* out_len
+);
 
 
 }  // extern "C"
