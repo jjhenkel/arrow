@@ -1096,6 +1096,31 @@ const char* match_tree_path_3_010100_011103_110003(
   const gdv_uint16 steps3,
   gdv_int32* out_len
 );
+const char* match_tree_path_3_010100_010003_010003(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 field1,
+  const gdv_uint16 label2,
+  const gdv_uint16 steps2,
+  const gdv_uint16 label3,
+  const gdv_uint16 steps3,
+  gdv_int32* out_len
+);
+const char* match_tree_path_3_010100_010003_010000(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_uint16 field1,
+  const gdv_uint16 label2,
+  const gdv_uint16 steps2,
+  const gdv_uint16 label3,
+  gdv_int32* out_len
+);
 const char* match_tree_path_2_010100_011003(
   gdv_int64 context,
   const gdv_int64 extra,
@@ -1105,6 +1130,17 @@ const char* match_tree_path_2_010100_011003(
   const gdv_uint16 field1,
   const gdv_uint16 label2,
   const gdv_int64 name2,
+  const gdv_uint16 steps2,
+  gdv_int32* out_len
+);
+const char* match_tree_path_2_011000_010003(
+  gdv_int64 context,
+  const gdv_int64 extra,
+  const gdv_binary path,
+  const gdv_int32 path_len,
+  const gdv_uint16 label1,
+  const gdv_int64 name1,
+  const gdv_uint16 label2,
   const gdv_uint16 steps2,
   gdv_int32* out_len
 );

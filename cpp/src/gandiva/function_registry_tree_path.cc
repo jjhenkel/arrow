@@ -326,9 +326,24 @@ std::vector<NativeFunction> GetTreePathFunctionRegistry() {
       binary(), kResultNullIfNull, "match_tree_path_3_010100_011103_110003",
       NativeFunction::kNeedsContext),
     NativeFunction(
+      "match_tree_path_3_010100_010003_010003", {},
+      DataTypeVector{int64(), binary(), uint16(), uint16(), uint16(), uint16(), uint16(), uint16()},
+      binary(), kResultNullIfNull, "match_tree_path_3_010100_010003_010003",
+      NativeFunction::kNeedsContext),
+    NativeFunction(
+      "match_tree_path_3_010100_010003_010000", {},
+      DataTypeVector{int64(), binary(), uint16(), uint16(), uint16(), uint16(), uint16()},
+      binary(), kResultNullIfNull, "match_tree_path_3_010100_010003_010000",
+      NativeFunction::kNeedsContext),
+    NativeFunction(
       "match_tree_path_2_010100_011003", {},
       DataTypeVector{int64(), binary(), uint16(), uint16(), uint16(), int64(), uint16()},
       binary(), kResultNullIfNull, "match_tree_path_2_010100_011003",
+      NativeFunction::kNeedsContext),
+    NativeFunction(
+      "match_tree_path_2_011000_010003", {},
+      DataTypeVector{int64(), binary(), uint16(), int64(), uint16(), uint16()},
+      binary(), kResultNullIfNull, "match_tree_path_2_011000_010003",
       NativeFunction::kNeedsContext),
   };
 
